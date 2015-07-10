@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Fretboard</title>
+	<link rel="stylesheet" type="text/css" href="fretboard.css">
+</head>
+<body>
+<div class="fretboard--banner"></div>
+<div class="fretboard--wrapper"></div>
+<form class="fretboard--chooser">
+	<label>Key</label>
+	<select name="key" id="key">
+		<option value="C">C</option>
+		<option value="C#">C#</option>
+		<option value="D">D</option>
+		<option value="D#">D#</option>
+		<option value="E">E</option>
+		<option value="F">F</option>
+		<option value="F#">F#</option>
+		<option value="G">G</option>
+		<option value="G#">G#</option>
+		<option value="A">A</option>
+		<option value="Bb">Bb</option>
+		<option value="B">B</option>
+	</select>
+
+	<label>Scale</label>
+	<select name="scale" id="scale">
+		<option value="">--</option>
+		<option value="major">Major</option>
+		<option value="minor">Minor</option>
+		<option value="major pentatonic">Major Pentatonic</option>
+		<option value="minor pentatonic">Minor Pentatonic</option>
+		<option value="major blues">Major Blues</option>
+		<option value="minor blues">Minor Blues</option>
+		<option value="ionian">Ionian</option>
+		<option value="dorian">Dorian</option>
+		<option value="phrygian">Phrygian</option>
+		<option value="lydian">Lydian</option>
+		<option value="mixolydian">Mixolydian</option>
+		<option value="aeolian">Aeolian</option>
+		<option value="locrian">Locrian</option>
+	</select>
+
+	<label>Chord</label>
+	<select name="chord" id="chord">
+		<option value="">--</option>
+		<option value="major">Major</option>
+		<option value="minor">Minor</option>
+		<option value="major 7th">Major 7th</option>
+		<option value="minor 7th">Minor 7th</option>
+		<option value="dominant 7th">Dominant 7th</option>
+		<option value="suspended">Suspended</option>
+		<option value="diminished">Diminished</option>
+	</select>
+
+	<button>Show</button>
+	<button type="button" class="clear">Clear</button>
+</form>
+
+<script type="text/javascript" src="vendor.js"></script>
+<script type="text/javascript" src="fretboard.js"></script>
+
+<script type="text/javascript">
+	var App = new Backbone.Marionette.Application();
+
+	App.addRegions({
+		content: $('.fretboard--wrapper')
+	});
+
+	App.addInitializer(function() {
+		
+		var fretBoard = new Fretboard.Views.Fretboard();
+
+
+		fretBoard.on('note:click', function(e) {
+			var note = $(e.target).data('note');
+			var key = $('[name="key"]').val();
+
+			if(key == note) {
+				this.highlightRoot(note);
+			}
+		});
+
+		fretBoard.on('note:hover', function(e) {
+			$('.fretboard--banner').html($(e.target).data('note'));
+		});
+
+
+		App.content.show(fretBoard);
+
+		$('[name="scale"]').change(function(e) {
+			$('[name="chord"]').val('');
+		});
+
+		$('[name="chord"]').change(function(e) {
+			$('[name="scale"]').val('');
+		});
+
+		$('.fretboard--chooser').submit(function(e) {
+			var key = $(this).find('[name="key"]').val();
+			var scale = $(this).find('[name="scale"]').val();
+			var chord = $(this).find('[name="chord"]').val();
+
+			if(scale != "") {
+				fretBoard.showNotes(fretBoard.getScaleNotes(key, scale))
+
+				$('.fretboard--banner').html(key);
+			}
+			else if(chord != "") {
+				fretBoard.showNotes(fretBoard.getChordNotes(key, chord))
+
+				$('.fretboard--banner').html(key);
+			}
+
+			e.preventDefault();
+		});
+
+		$('.clear').click(function(e) {
+			fretBoard.unhighlightNotes();
+			fretBoard.unhighlightRoot();
+		});
+	});
+
+	App.start();
+
+</script>
+</body>
+</html>

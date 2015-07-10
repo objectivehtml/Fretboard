@@ -1,0 +1,22 @@
+{{#frets}}
+	<div class="fretboard--fret {{#if highlight}}fretboard--highlight{{/if}}" data-fret="{{value}}" style="left:{{left}}%">
+		{{#notes}}
+			<div class="fretboard--note" data-note="{{this}}"></div>
+		{{/notes}}
+
+		{{#if inlays}}
+		<div class="fretboard-inlays">
+			<div class="fretboard--inlay"></div>
+			{{#if ../highlight}}
+			<div class="fretboard--inlay"></div>
+			{{/if}}
+		</div>
+		{{/if}}
+	</div>
+{{/frets}}
+
+<div class="fretboard--strings">
+{{#strings}}
+	<div class="fretboard--string" data-string="{{this}}"></div>
+{{/strings}}
+</div>
